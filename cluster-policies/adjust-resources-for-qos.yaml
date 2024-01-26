@@ -1,0 +1,40 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: adjust-resources-for-qos
+spec:
+  rules:
+    - name: ensure-burstable-qos
+      match:
+        resources:
+          kinds:
+            - Pod
+      mutate:
+        patchStrategicMerge:
+          spec:
+            containers:
+              - (name): "*"
+                resources:
+                  requests:
+                    memory: ">=200Mi"
+                    cpu: ">=200m"
+                  limits:
+                    memory: ">=400Mi"
+                    cpu: ">=400m"
+    - name: ensure-guaranteed-qos
+      match:
+        resources:
+          kinds:
+            - Pod
+      mutate:
+        patchStrategicMerge:
+          spec:
+            containers:
+              - (name): "*"
+                resources:
+                  requests:
+                    memory: ">=400Mi"
+                    cpu: ">=400m"
+                  limits:
+                    memory: ">=400Mi"
+                    cpu: ">=400m"

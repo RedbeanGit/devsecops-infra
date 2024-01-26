@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-signed-images
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: check-for-signed-images
+      match:
+        resources:
+          kinds:
+            - Pod
+      verifyImages:
+        - image: "*"
+          key: |-
+            -----BEGIN PUBLIC KEY-----
+            [Your-Public-Key-Here]
+            -----END PUBLIC KEY-----
